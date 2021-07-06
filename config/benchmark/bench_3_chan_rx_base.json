@@ -1,0 +1,100 @@
+
+// Comments are allowed in this JSON config file
+// The package rjsmin is used to strip the comments when parsing
+
+
+{
+    "configBase": "../base.json", // base config file name
+    "Main":{
+	// For the main code
+	"workerId": "bench_base",
+	"PacketLen": 10000,
+	"RandSeed": 123,
+	"softCombiner_enabled": true,
+	"protocols": {
+	    "UHF" : "bench"
+	}
+
+    },
+
+    
+    "Demodulator":{
+	"timeoutSeconds" : 100 // timeout while waiting for Gnu radio to provide data
+    },
+
+    "GPU":{
+	"UHF" :{
+	    "blockSize": 15 // bit
+	}
+    },
+
+    "Radios":{
+	"rangeRateMax" : 7500, // maximum expected rangerate + a solid tolerance. Used to determine the doppler search window
+	"Rx" :{
+	    "UHF-A" :{
+	     	"CUDA_settings": "UHF",
+	     	"frequency_Hz" : 437.3e6,
+		"frequencyOffset_Hz": 38400,
+		"baud" : 9600,
+		"samplesPerSym": 16,
+		"doppCarrierSteps" : 64,
+		"Protocol": "UHF",
+		"radioBackend": "UHF",
+		"Interfaces": {
+		    "RxInPort": "tcp://127.0.0.1:5560", // from GRC to doppler finder
+		    "demodOut": "tcp://localhost:10003" // to softCombiner or decoder based on softCombiner_enabled setting
+		}
+	    },
+	    "UHF-B" :{
+	     	"CUDA_settings": "UHF",
+	     	"frequency_Hz" : 437.3e6,
+		"frequencyOffset_Hz": 38400,
+		"baud" : 9600,
+		"samplesPerSym": 16,
+		"doppCarrierSteps" : 64,
+		"Protocol": "UHF",
+		"radioBackend": "UHF",
+		"Interfaces": {
+		    "RxInPort": "tcp://127.0.0.1:5561", // from GRC to doppler finder
+		    "demodOut": "tcp://localhost:10003" // to softCombiner or decoder based on softCombiner_enabled setting
+		}
+	    },
+	    "UHF-C" :{
+	     	"CUDA_settings": "UHF",
+	     	"frequency_Hz" : 437.3e6,
+		"frequencyOffset_Hz": 38400,
+		"baud" : 9600,
+		"samplesPerSym": 16,
+		"doppCarrierSteps" : 64,
+		"Protocol": "UHF",
+		"radioBackend": "UHF",
+		"Interfaces": {
+		    "RxInPort": "tcp://127.0.0.1:5562", // from GRC to doppler finder
+		    "demodOut": "tcp://localhost:10003" // to softCombiner or decoder based on softCombiner_enabled setting
+		}
+
+	    }
+	}
+    },
+    
+    "decoder":{
+	"plotRawBits"  : true
+    },
+
+    "Interfaces":{
+	"External":{
+	    "decodeBytesOut_ZMQ": {
+		"UHF" : "tcp://*:5512", // port UHF packets come out on
+		"SBAND" : "tcp://*:5506" // port SBAND packets come out on
+	    }
+	},
+	"Internal":{
+	    "demodIn": "tcp://*:10003", // in softCombiner - from demodulator(s)
+	    "demodOut": "tcp://localhost:10003", // in demodulator - to softCombiner
+	    "decodeOut": "tcp://localhost:10004", // from softCombiner to decoder
+	    "decodeIn": "tcp://*:10004", // decoder input from the demodulator(s) or softCombiner
+	    "GRCRpc": "http://localhost:8052" // RPC output to GRC (maybe not needed)
+	}
+
+    }
+}

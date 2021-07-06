@@ -1,0 +1,17 @@
+
+// Comments are allowed in this JSON config file
+// The package rjsmin is used to strip the comments when parsing
+
+
+{
+    "configBase": "bench_base.json", // base config file name
+    "Main":{
+	// For the main code
+	"workerId": "bench_GMSK",
+	"protocols": {
+	    "UHF" : "bench_GMSK"
+	}
+
+    }
+
+}

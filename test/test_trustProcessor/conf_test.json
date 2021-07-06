@@ -1,0 +1,26 @@
+
+{
+        "Interfaces":{
+	"External": {
+	    "XMLRpcIn": "0.0.0.0:8051"
+	},
+	"Internal":{
+	    "demodIn": "tcp://*:10003", // in softCombiner - from demodulator(s)
+	    "demodOut": "tcp://localhost:10003", // in demodulator - to softCombiner
+	    "decodeOut": "tcp://localhost:10004", // from softCombiner to decoder
+	    "decodeIn": "tcp://*:10004", // decoder input from the demodulator(s) or softCombiner
+	    "GRCRpc": "http://localhost:8052" // RPC output to GRC (maybe not needed)
+	}
+
+    },
+    "SoftCombiner":{
+	"processingInterval": 0.3, // seconds - time interval to look for data to process
+	"pollingTimeout": 95,  // MUST BE LOWER THAN PROCESSING TIMEOUT  ms Too low values can cause high cpu usage
+	"workerTimeout": 20.0,  // seconds - time until worker gets deleted
+	"workerDataTimeout": 3.5,  // seconds - time until data from worker is purged
+	"varianceMultiplier": 15.0, // used to set the threshold for the cross correlation.
+	"minProcessingLength": 1000, // Minimum number of bits to match, if any before processing commences
+	"workerDataRequestThreshold": 3, // Time to delay processing a worker when no other workers match time is given by (workerDataRequestThreshold*processingTimeout)
+	"masterVoteWeight": 1.2 // > 1 makes ties in voting go to master < 0 to slaves
+    }
+}

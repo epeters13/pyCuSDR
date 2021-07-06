@@ -1,0 +1,103 @@
+// Comments are allowed in this JSON config file
+// The package rjsmin is used to strip the comments when parsing
+
+// base config file. This is loaded using the machine specific config.
+// Attributes present in both files will be overwritten by the machine specific attribute
+{
+    "configBase": "../../config/base.json", // base config file name
+    
+    "Main":{
+	// For the main code
+	"protocols": {   // for new style multi-protocol support
+	    "UHF" : "CC11xx"
+	},
+	
+	"workerId": "gpu-sdr"
+    },
+
+    "LogInfo":{ // attributes to control the information that is logged
+	"demodulator_print_always": false, // print every Doppler search block
+	"demodulator_print_interval": 50,  // print every n'th Doppler search block
+	"demodulator_print_threshold_enabled": true,  // print Doppler search blocks where the SNR exceeds the threshold
+	"demodulator_print_threshold_lvl" :  12 // print Doppler search blocks with SNR above this
+	
+    },
+
+
+    "Demodulator":{
+	"timeoutSeconds" : 120 // timeout while waiting for Gnu radio to provide data
+	},
+
+
+    "Radios":{ // the radios itself should be configured separately for each station
+	"rangeRateMax" : 27500, // maximum expected rangerate + a solid tolerance. Used to determine the doppler search window
+	"Protocol":{
+	    "rx_preamble" : ["0xaa","0xaa","0xaa","0xaa"],
+	    "rx_sync_seq" : ["0xd6","0xba","0xd6","0xba"],
+	    //"rx_sync_seq" : ["0xab","0x35","0xab","0x35"],
+	    "tx_preamble" : ["0xaa"],
+	    "tx_num_preambles" : 10,
+	    "tx_sync_seq" : ["0xd6","0xba","0xd6","0xba"]  
+	},
+	"Rx":{
+	    "UHF-H" :{
+		"name" : "UHF", // protocol name
+	     	"frequency_Hz" : 401.538e6,
+		"frequencyOffset_Hz": 148320, // to offtune the digitizer
+		// "noise_measure_offset_Hz" : -29664,
+		"baud" : 7416,
+		"samplesPerSym": 128, //16,
+		"doppCarrierSteps" : 64,
+	     	"CUDA_settings": "UHF",
+		"radioBackend": "UHF",
+		"voteGroup": "UHF", // for trustprocessor -- votes only with others in the same group
+		"Protocol": "UHF",
+		"Interfaces": {
+		    "RxInPort": "tcp://127.0.0.1:5560", // from GRC to doppler finder
+		    "demodOut": "tcp://localhost:10003" // to softCombiner or decoder based on softCombiner_enabled setting
+		    // "demodOutExternal": "tcp://10.8.0.11:10003", // for external decoding -- comment to disable
+		}
+	    }
+
+	},
+	"Tx" :{
+	    "UHF": {
+		"baud": 7416,
+		"samplesPerSym": 128,
+		"frequency_Hz": 402.538e6,
+		"frequencyOffset_Hz": 148320, // to offtune the DAC
+		// "noFlags": 30, // number of sync flags to apply
+		"Protocol": "UHF",
+		"Interfaces": {
+		    "TxModToUSRPPort": "tcp://127.0.0.1:5571", // from modulator to GRC
+		    "TxDataIn": "tcp://127.0.0.1:5501", // from protocol to modulator
+		    "TxManualIn": "tcp://localhost:15511" // Can be used to send bytes directly to the modulator, bypassing link manager.
+		}
+	    }
+	}
+    },
+    
+    "decoder":{
+	"packetCheckHist": 40, // max number of packets to keep in history buffer (10 pr worker)
+	"packetCheckHistTimeout": 1 // maximum time for which two identical packets are considered the same
+    },
+    "Interfaces":{
+	"External":{
+	    "decodeBytesOut_ZMQ": {
+		"UHF" : "tcp://*:5502", // port UHF packets come out on
+		"SBAND" : "tcp://*:5506" // port SBAND packets come out on
+	    },
+	    "XMLRpcIn": "0.0.0.0:8051",
+	    "TxManualIn": "tcp://localhost:15511" // Can be used to send bytes directly to the modulator, bypassing spacelink.
+	},
+	"Internal":{
+
+	    "demodIn": "tcp://*:10003", // in softCombiner - from demodulator(s)
+	    "demodOut": "tcp://localhost:10003", // in demodulator - to softCombiner
+	    "decodeOut": "tcp://localhost:10004", // from softCombiner to decoder
+	    "decodeIn": "tcp://*:10004", // decoder input from the demodulator(s) or softCombiner
+	    "GRCRpc": "http://localhost:8052" // RPC output to GRC (maybe not needed)
+	}
+	
+    }
+}
