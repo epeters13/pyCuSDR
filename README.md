@@ -39,11 +39,13 @@ If you additionally want to cite this software package, please cite as follows:
 ```
 
 ## Authors & Acknowledgments <a name="ack"></a>
-This software was written and packaged by Edwin G. W. Peters.
+This software was written and packaged by [Edwin G. W. Peters](https://github.com/mugpahug).
 
 Special thanks to Craig R. Benson for proposing the idea and for the fruitful discussions
 
 ## Examples and running benchmarks <a name="bench"></a>
+
+To run py-CUDA-SDR start `start_py-cuda-sdr.py`
 
 ### Example using [GNU radio](https://www.gnuradio.org/) as the [UHD USRP](https://github.com/EttusResearch/uhd) interface
 
