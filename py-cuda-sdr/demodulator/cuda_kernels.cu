@@ -214,7 +214,9 @@ __inline__ __device__ float2 warpArgMaxValsOffset(int maxIdx, float maxVal,int m
   int tmpIdx;
   for (int i = WARP_SIZE >> 1; i > 0; i = i >> 1)
   {
-    __syncwarp(mask);
+	int activeMask = __activemask(); // find the active threads   
+
+    __syncwarp(activeMask);
     tmp = __shfl_xor_sync(mask,maxVal,i);
     tmpIdx =  __shfl_xor_sync(mask,maxIdx,i);
 
@@ -263,9 +265,9 @@ __global__ void findCodeRateAndPhase(float *out, Complex *in, const int offset, 
       maxValCand = maxIdxVal.y; // value
       arrayIdx = (int) (maxIdxVal.x);// index
     }
-    __syncwarp();
-    int activeMask = __activemask(); // find the active threads
-       
+    int activeMask = __activemask(); // find the active threads   
+    __syncwarp(activeMask);
+    
     maxIdxVal = warpArgMaxValsOffset(arrayIdx,maxValCand,activeMask); // Each thread in the warp now has the max value and index	
     // __syncwarp();
   }
@@ -487,8 +489,9 @@ __inline__ __device__
 float activeWarpReduceSum(float val)
 {
   // Warp reduction sum in warp
-  __syncwarp();
+  
   int mask = __activemask();
+  __syncwarp(mask);
   
   for (int i = WARP_SIZE/2; i > 0; i/=2)
     val += __shfl_xor_sync(mask,val,i);
@@ -571,8 +574,9 @@ __global__ void findDopplerEst(float *res, float* __restrict__ tmpIdx, float* __
 
   // Now each thread has the local optimal idx for the Doppler for each their own mask. Find the average optimal index accross all masks
   float maxDoppIdx = activeWarpReduceSum(maxDoppIdxL)/NUM_MASKS;
+    int activeMask = __activemask(); // find the active threads   
 
-  __syncwarp();
+  __syncwarp(activeMask);
   float maxDoppVal = activeWarpReduceSum(maxDoppValL)/NUM_MASKS;
 
   // Compute the standard deviation of the estimates among the local optimals from all threads (last part is done below)

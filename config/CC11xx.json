@@ -42,7 +42,7 @@
 	"Rx":{
 	    "UHF-H" :{
 		"name" : "UHF", // protocol name
-	     	"frequency_Hz" : 437.3e6,
+	     	"frequency_Hz" : 401.538e6,
 		"frequencyOffset_Hz": 148320, // to offtune the digitizer
 		// "noise_measure_offset_Hz" : -29664,
 		"baud" : 7416,
@@ -64,7 +64,7 @@
 	    "UHF": {
 		"baud": 7416,
 		"samplesPerSym": 128,
-		"frequency_Hz": 437.3e6,
+		"frequency_Hz": 402.538e6,
 		"frequencyOffset_Hz": 148320, // to offtune the DAC
 		// "noFlags": 30, // number of sync flags to apply
 		"Protocol": "UHF",
