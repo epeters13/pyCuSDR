@@ -73,7 +73,7 @@ def exitHandler():
 atexit.register(exitHandler)
 
 # parse arguments
-parser = argparse.ArgumentParser(prog='py-CUDA-SDR', description = 'Software defined radio that performs Doppler search and supports multiple receiving stations and antennas')
+parser = argparse.ArgumentParser(prog='pyCu-SDR', description = 'Software defined radio that performs Doppler search and supports multiple receiving stations and antennas')
 
 parser.add_argument('-c', '--configFile', help='Configuration file to use', action='store', default = '')
 parser.add_argument('-v',help=' -vv, -vvv increases verbosity',action='count',default=0)
@@ -148,7 +148,7 @@ rpcInterface.log.setLevel(logLevel)
 
 
 # start
-log.info("Starting py-cuda-sdr {} (commit date {})".format(VERSION,DATE))
+log.info("Starting pyCu-SDR {} (commit date {})".format(VERSION,DATE))
 
 log.info(f"Using config file {args.configFile}")
 
