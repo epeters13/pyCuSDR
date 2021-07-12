@@ -2,7 +2,7 @@
 #   Creation date    : Sat Jul 10 08:26:04 2021 (+1000)
 #   Email            : edwin.peters@unsw.edu.au
 # ------------------------------------------------------------------------------
-# Last-Updated       : Mon Jul 12 15:37:11 2021 (+1000)
+# Last-Updated       : Mon Jul 12 16:28:44 2021 (+1000)
 #           By       : Edwin G. W. Peters @ sdr-Surface-Book-2
 # ------------------------------------------------------------------------------
 # File Name          : rig_server.py
@@ -17,7 +17,7 @@ import socket
 import string
 from enum import Enum
 from lib.freq_from_rangerate import *
-
+from dummy_radios import DummyRadio
 
 class Response_codes(Enum):
     SUCCESS = 0

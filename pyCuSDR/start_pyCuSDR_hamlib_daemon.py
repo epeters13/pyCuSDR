@@ -2,7 +2,7 @@
 #   Creation date    : Sat Jul 10 07:55:14 2021 (+1000)
 #   Email            : edwin.peters@unsw.edu.au
 # ------------------------------------------------------------------------------
-# Last-Updated       : Mon Jul 12 15:53:20 2021 (+1000)
+# Last-Updated       : Mon Jul 12 16:27:55 2021 (+1000)
 #           By       : Edwin G. W. Peters @ sdr-Surface-Book-2
 # ------------------------------------------------------------------------------
 # File Name          : start_py_cu_sdr_hamlib.py
@@ -22,9 +22,6 @@ from pyCuSDR import VERSION
 from pyLoadModularJson import loadModularJson
 import rig_server
 
-# for testing
-sys.path.append('../test/')
-from dummy_radios import Radio
 
 CFG_FILE = "../config/hamlib_sockets.json"
 
