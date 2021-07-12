@@ -1,7 +1,7 @@
 # pyCuSDR
 A GPU accelerated software defined radio with real-time Doppler search and correction. The Doppler search and demodulation is done using matched filters. This allows pyCuSDR to be adapted to any modulation scheme by supplying a different set of filters.
 
-pyCuSDR features a correlation demodulator and decoder that triggers on sync and preamles. The decored can perform CRC and FEC. Check out [pyreedsolomon](https://github.com/mugpahug/pyreedsolomon) for a fast Python Reed Solomon interface for Linux.
+pyCuSDR features a correlation demodulator and decoder that triggers on sync and preamles. The decored can perform CRC and FEC. Check out [pyreedsolomon](https://github.com/epeters13/pyreedsolomon) for a fast Python Reed Solomon interface for Linux.
 
 ## Table of Contents
 
@@ -33,8 +33,8 @@ If you additionally want to cite this software package, please cite as follows:
         title={pyCuSDR: a GPU accelerated software defined radio with real time Doppler correction},
         month=Jul,
         year=2021,
-        url={https://github.com/mugpahug/pycusdr},
-        note={\url{https://github.com/mugpahug/pycusdr}}
+        url={https://github.com/epeters13/pyCuSDR},
+        note={\url{https://github.com/epeters13/pyCuSDR}}
     }
 ```
 
