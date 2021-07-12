@@ -76,7 +76,7 @@ class Modulator():
 
         self.noise = NOISE_VAR*(np.random.randn(SIG_MIN_LENGTH)+1j*np.random.randn(SIG_MIN_LENGTH)).astype(np.complex64)
         # local hidden variables (set by setters)
-        self._rangeRate = 0
+        self._rangerate = 0
 
     #@profile(immediate=True)
     def encodeAndModulate(self,byteMessage):
@@ -138,18 +138,18 @@ class Modulator():
     #
     ######
 
-    def get_rangeRate(self):
+    def get_rangerate(self):
         """RPC interface"""
-        return self._rangeRate
+        return self._rangerate
 
-    def set_rangeRate(self,rangeRate):
+    def set_rangerate(self,rangerate):
         """RPC interface"""
-        self._rangeRate = rangeRate
+        self._rangerate = rangerate
 
     def getDoppler(self):
         # in rad/second
         # to remove doppler multiply with np.exp(-1j*self.getDoppler/baud/spSym)
-        return self._rangeRate/3e8*self.Fc*2*np.pi
+        return self._rangerate/3e8*self.Fc*2*np.pi
 
 
     # for RPC interface
@@ -184,7 +184,7 @@ class Modulator():
     @property
     def TxTotalFreqOffset(self):
         """Returns centre frequency offset + doppler"""
-        return self._TxFreqOffset + self._TxCentreFreqOffset + self._rangeRate/3e8*self.Fc
+        return self._TxFreqOffset + self._TxCentreFreqOffset + self._rangerate/3e8*self.Fc
         
     @property
     def TxFreqOffset(self):

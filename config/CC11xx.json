@@ -25,7 +25,7 @@
 
 
     "Demodulator":{
-	"timeoutSeconds" : 120 // timeout while waiting for Gnu radio to provide data
+	"timeoutSeconds" : 10 // timeout while waiting for Gnu radio to provide data
 	},
 
 
@@ -42,7 +42,7 @@
 	"Rx":{
 	    "UHF-H" :{
 		"name" : "UHF", // protocol name
-	     	"frequency_Hz" : 401.538e6,
+	     	"frequency_Hz" : 401.538e6, // actual carrier center frequency
 		"frequencyOffset_Hz": 148320, // to offtune the digitizer
 		// "noise_measure_offset_Hz" : -29664,
 		"baud" : 7416,
@@ -64,7 +64,8 @@
 	    "UHF": {
 		"baud": 7416,
 		"samplesPerSym": 128,
-		"frequency_Hz": 402.538e6,
+		"frequency_Hz": 402.538e6, // actual carrier center frequency
+		"frequency_hamlib_Hz": 400e6, // This is the carrier that gpredict uses. We need to subtract this to recover the Doppler component of the frequency provided by gpredict
 		"frequencyOffset_Hz": 148320, // to offtune the DAC
 		// "noFlags": 30, // number of sync flags to apply
 		"Protocol": "UHF",

@@ -13,6 +13,7 @@ import numpy as np
 import asyncio
 import zmq
 import zmq.asyncio
+zmq.asyncio.install() # pyzmq < 17 needs this 
 
 import logging
 import time, sys, os
@@ -21,7 +22,7 @@ from create_signals import *
 
 OUT_DIR = 'bench_logs/'
 
-nDemodulators = 3 # can be set higher if multiple demodulators shall vote
+nDemodulators = 1 # can be set higher if multiple demodulators shall vote
 
 BASEPORT = 5560
 sockets_addr = [f'tcp://*:{BASEPORT + i}' for i in range(nDemodulators)]

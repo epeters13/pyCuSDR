@@ -33,21 +33,6 @@ import logging, logging.handlers
 import multiprocessing_logger
 
 
-LOG_FOLDER = '../logs'
-
-LOG_FORMAT		= '%(asctime)s.%(msecs)03d %(module)-16s -- %(message)s '
-LOG_FORMAT_DEBUG	= '%(asctime)s.%(msecs)03d %(levelname)s %(module)-16s %(funcName)-22s:%(lineno)5s -- %(message)s'
-
-try:
-    VERSION = re.sub(r'[\n\r\t"\']', "",subprocess.check_output(['git', 'describe', '--tags']).decode('utf-8'))
-    DATE = re.sub(r'[\n\r\t"\']', "",subprocess.check_output(['git', 'log', '--pretty=format:"%ad"', '-1']).decode('utf-8'))
-except:
-    VERSION = '0.93'
-    DATE = '2021-07-06'
-
-#DEFAULT_CONFIG = 'config.json'
-
-
 
 class GracefulKiller:
     """
@@ -68,6 +53,22 @@ def exitHandler():
     # the below code is useful for debugging hanging processes
     sys.stdout.flush()
  
+
+LOG_FOLDER = '../logs'
+
+LOG_FORMAT		= '%(asctime)s.%(msecs)03d %(module)-16s -- %(message)s '
+LOG_FORMAT_DEBUG	= '%(asctime)s.%(msecs)03d %(levelname)s %(module)-16s %(funcName)-22s:%(lineno)5s -- %(message)s'
+
+try:
+    VERSION = re.sub(r'[\n\r\t"\']', "",subprocess.check_output(['git', 'describe', '--tags']).decode('utf-8'))
+    DATE = re.sub(r'[\n\r\t"\']', "",subprocess.check_output(['git', 'log', '--pretty=format:"%ad"', '-1']).decode('utf-8'))
+except:
+    VERSION = '0.93'
+    DATE = '2021-07-06'
+
+#DEFAULT_CONFIG = 'config.json'
+
+
 
         
 atexit.register(exitHandler)
@@ -135,15 +136,15 @@ log = logging.getLogger(LOG_NAME)
 ## Individual module log verbosity tuning
 # demodulator_process.log.setLevel(logging.DEBUG)
 # decoder_process.log.setLevel(logging.DEBUG)
-modulator_process.log.setLevel(logging.INFO)
+# modulator_process.log.setLevel(logging.INFO)
 # rpcInterface.log.setLevel(logging.INFO)
-softCombiner.log.setLevel(logging.INFO)
+# softCombiner.log.setLevel(logging.INFO)
 
 demodulator_process.log.setLevel(logLevel)
 decoder_process.log.setLevel(logLevel)
-# modulator_process.log.setLevel(logLevel)
+modulator_process.log.setLevel(logLevel)
 rpcInterface.log.setLevel(logLevel)
-# softCombiner.log.setLevel(logLevel)
+softCombiner.log.setLevel(logLevel)
 
 
 
@@ -327,3 +328,5 @@ finally:
     
     log.info('Finished -- Bye')
 
+
+    

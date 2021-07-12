@@ -11,6 +11,8 @@ import signal
 from __global__ import *
 
 from lib import *
+from lib.freq_from_rangerate import *
+
 import modulator
 
 log	= logging.getLogger(LOG_NAME+'.'+__name__)
@@ -37,9 +39,11 @@ class Modulator_process(Process):
             self.name = protocol.name
             self.confRadio = conf['Radios']['Tx']
             
-        self.__rangeRate = Value('f',0)
-        self.__Fc = Value('d',0)
-        self.__Fs = Value('d',0)
+        self.__rangerate = Value('f',0)
+        self.__Fc = Value('d',self.confRadio.get('frequency_Hz',1))
+        # this is used to extract the Doppler from gpredict if gpredict has the center frequency set to something different. Is used to extract the Doppler component of the frequency provided
+        self.__Fc_hl = self.confRadio.get('frequency_hamlib_Hz',self.__Fc.value)
+        self.__Fs = Value('d',self.confRadio.get('samplesPerSym')*self.confRadio.get('baud'))
         self.__baudRate = Value('d',self.confRadio['baud'])
 
         self.__centreFreqOffset = Value('d',self.confRadio.get('centreFrequencyOffset',0.)) # receiver radio offset can be configured over RPC
@@ -132,9 +136,9 @@ class Modulator_process(Process):
                 try:
                     tm = time.time()
                     evts = dict(inDataPoller.poll(self.timeOut_ms))
-                    with self.__rangeRate.get_lock():
-                        rr = self.__rangeRate.value
-                        modul.set_rangeRate(self.__rangeRate.value)
+                    with self.__rangerate.get_lock():
+                        rr = self.__rangerate.value
+                        modul.set_rangerate(self.__rangerate.value)
                     modul.TxCentreFreqOffset = self.__centreFreqOffset.value
                     # modul.noFlags = self.__numSyncFlags # change the number of sync flags
                     if len(evts) > 0:
@@ -226,15 +230,15 @@ class Modulator_process(Process):
         return self.__baudRate.value
         
     @property
-    def rangeRate(self):
-        return self.__rangeRate.value
+    def rangerate(self):
+        return self.__rangerate.value
 
-    @rangeRate.setter
-    def rangeRate(self,rangeRate):
+    @rangerate.setter
+    def rangerate(self,rangerate):
         # Set by orbit tracker to precompensate the uplink Doppler
-        log.debug('setting rangeRate {} m/s'.format(rangeRate))
-        with self.__rangeRate.get_lock():
-            self.__rangeRate.value = np.double(rangeRate)
+        log.debug('setting rangerate {} m/s'.format(rangerate))
+        with self.__rangerate.get_lock():
+            self.__rangerate.value = np.double(rangerate)
 
     @property
     def Fc(self):
@@ -272,4 +276,20 @@ class Modulator_process(Process):
     def totalFreqOffset(self):
         """Returns the freqOffset + centreFreqOffset + doppler"""
         return self.__totalFreqOffset.value
+
+    @property
+    def doppler(self):
+        return freq_from_rangerate(self.__rangerate.value,self.__Fc_hl)
+
+    @property
+    def freq_hl(self):
+        """
+        Hamlib frequency setter
+        """
+        return self.__Fc_hl + self.doppler
+
+    @freq_hl.setter
+    def freq_hl(self,val):
+        self.rangerate = rangerate_from_freq(val,self.__Fc_hl)
+
 

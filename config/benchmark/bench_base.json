@@ -18,7 +18,7 @@
 
     
     "Demodulator":{
-	"timeoutSeconds" : 100 // timeout while waiting for Gnu radio to provide data
+	"timeoutSeconds" : 10 // timeout while waiting for Gnu radio to provide data
     },
 
     "GPU":{

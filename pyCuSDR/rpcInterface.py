@@ -62,12 +62,14 @@ class RpcInterface(threading.Thread):
             self.GRCServiceControl = xmlrpc.client.Server(GRCServiceControlAddr)
         except Exception as e:
             log.error('Failed to register GRC service control. Reason: %s' %(e))
-            
+
+        socket.setdefaulttimeout(1)
         try:
             GRCRpcAddr = conf['Interfaces']['Internal']['GRCRpc']
             log.info('Registering GRC RPC interface on %s' %(GRCRpcAddr))
             import xmlrpc.client
             self.GRCRpc = xmlrpc.client.Server(GRCRpcAddr)
+            self.GRCPpc.timeout = 1.0
         except Exception as e:
             log.error('Failed to register GRC interface control. Reason: %s' %(e))
 
@@ -111,16 +113,16 @@ class RpcInterface(threading.Thread):
         @server.register_function
         def get_Tx_rangerate(name = 'UHF'):
             """Returns the Tx rangerate [float]"""
-            return self.modulator[name].rangeRate
+            return self.modulator[name].rangerate
 
         @server.register_function
-        def set_Tx_rangerate(rangeRate):
+        def set_Tx_rangerate(rangerate):
             """Sets the Tx rangerate [float] for all modulators"""
             for modul in self.modulator.values():
-                modul.rangeRate = rangeRate
+                modul.rangerate = rangerate
             for demod in self.demodulator:
                 # used by the demodulator to compute the frequency offset
-                demod.TxRangeRate = rangeRate
+                demod.TxRangerate = rangerate
 
         # sample frequency
         @server.register_function
@@ -238,15 +240,15 @@ class RpcInterface(threading.Thread):
     def registerRxMethods(self,server):
 
         ## Rx methods
-        # rangeRate
+        # rangerate
         @server.register_function
         def get_Rx_rangerate(antenna=0):
             """Returns the Rx rangerate [float]"""
-            return self.demodulator[antenna].rangeRate
+            return self.demodulator[antenna].rangerate
 
         
         @server.register_function
-        def set_Rx_rangerate(rangeRate,antenna=0):
+        def set_Rx_rangerate(rangerate,antenna=0):
             """Setting the Rx rangerate is not implemented"""
             raise NotImplementedError('Setting the RxRangeRate is not implemented')
             # warnings.warn('Setting the RxRangeRate is not implemented')
@@ -428,20 +430,22 @@ class RpcInterface(threading.Thread):
                 return NotImplementedError('Not available in single or client listen mode')
              
         
-    def kill(self):
+    def terminate(self):
         self._stopEvent.set()
+        self.rpcServ.server_close()
+
         return 1
         
     def __del__(self):
+        self.rpcServ.server_close()
         del self.rpcServ
         
     def run(self):
 
         while not self._stopEvent.is_set():
-        # self.rpcServ.serve_forever()
             self.rpcServ.handle_request()
 
-        log.debug('XMLRPC server terminated')
+        log.info('XMLRPC server terminated')
         
 
     ## Helper methods to interface GRC commands
@@ -483,12 +487,6 @@ class RpcInterface(threading.Thread):
         log.info('Starting GRC')
         self.GRCServiceControl.start()
         self.GRCRunning = True
-        # except Fault as e:
-        #     log.warning('Failed to start GRC. Reason: %s' %(e))
-        # except Exception as e:
-        #     log.error('Exception occured while attempting to start GRC: %s' %(e))
-        #     log.exception(e)
-        #     # log.warning('start_GRC() is not implemented')
         return 1
 
     def kill_GRC(self):
@@ -497,23 +495,17 @@ class RpcInterface(threading.Thread):
         log.info('Stopping GRC')
         self.GRCRunning = False
         try:
-            socket.setdefaulttimeout(5)
+            socket.setdefaulttimeout(5) # make sure we have enough time to kill GRC
             self.GRCServiceControl.kill()
+            socket.setdefaulttimeout(1) # back to 1 second
         except socket.timeout as e:
             raise TimeoutError('Timeout while attempting to kill GRC')
-            
-        # except Fault as e:
-        #     log.warning('Failed to kill GRC. Reason: %s' %(e))
-        # except Exception as e:
-        #     log.error('Exception occured while attempting to kill GRC: %s' %(e))
-        #     log.exception(e)
-        # log.warning('kill_GRC() is not implemented')
         return 1
     
 class dummyModulator():
 
     _Fs = 256
-    _rangeRate = 10.2
+    _rangerate = 10.2
     _Fc = 10000
     def __init__(self):
         """Implements modulator methods for unit testing"""
@@ -528,13 +520,13 @@ class dummyModulator():
         return self._Fc
 
     @property
-    def rangeRate(self):
-        return self._rangeRate
+    def rangerate(self):
+        return self._rangerate
 
-    @rangeRate.setter
-    def rangeRate(self,rangeRate):
-        log.warning('Dummy method received rangeRate  %f'%(rangeRate))
-        self._rangeRate = rangeRate
+    @rangerate.setter
+    def rangerate(self,rangerate):
+        log.warning('Dummy method received rangerate  %f'%(rangerate))
+        self._rangerate = rangerate
 
 
 

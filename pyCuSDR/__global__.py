@@ -4,7 +4,7 @@ import numpy as np
 import string
 from lib.safe_lists import *
 
-LOG_NAME = "pyCu-SDR"
+LOG_NAME = "pyCuSDR"
 
 """
 In benchmark mode, only packets from one channel are sent to the link manager

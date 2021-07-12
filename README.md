@@ -1,7 +1,7 @@
-# pyCu-SDR
-A GPU accelerated software defined radio with real-time Doppler search and correction. The Doppler search and demodulation is done using matched filters. This allows pyCu-SDR to be adapted to any modulation scheme by supplying a different set of filters.
+# pyCuSDR
+A GPU accelerated software defined radio with real-time Doppler search and correction. The Doppler search and demodulation is done using matched filters. This allows pyCuSDR to be adapted to any modulation scheme by supplying a different set of filters.
 
-pyCu-SDR features a correlation demodulator and decoder that triggers on sync and preamles. The decored can perform CRC and FEC. Check out [pyreedsolomon](https://github.com/mugpahug/pyreedsolomon) for a fast Python Reed Solomon interface for Linux.
+pyCuSDR features a correlation demodulator and decoder that triggers on sync and preamles. The decored can perform CRC and FEC. Check out [pyreedsolomon](https://github.com/mugpahug/pyreedsolomon) for a fast Python Reed Solomon interface for Linux.
 
 ## Table of Contents
 
@@ -12,7 +12,7 @@ pyCu-SDR features a correlation demodulator and decoder that triggers on sync an
 5. [Licensing information](#license)
 
 ## Citing <a name="citing"></a>
-If you use pyCu-SDR in scholary publications, presentations or to communicate with your satellite, please cite the following work that presents the algorithms used:
+If you use pyCuSDR in scholary publications, presentations or to communicate with your satellite, please cite the following work that presents the algorithms used:
 ```
     @ARTICLE{peters:2020:aismag,
         author={Peters, Edwin G. W. and Benson, Craig R.},
@@ -28,13 +28,13 @@ If you use pyCu-SDR in scholary publications, presentations or to communicate wi
 
 If you additionally want to cite this software package, please cite as follows:
 ```
-    @MISC{givon_scikit-cuda_2019,
+    @MISC{pyCuSDR:repo,
         author={Edwin G. W. Peters},
-        title={pyCu-SDR: a GPU accelerated software defined radio with real time Doppler correction},
+        title={pyCuSDR: a GPU accelerated software defined radio with real time Doppler correction},
         month=Jul,
         year=2021,
-        url={https://github.com/mugpahug/pycu-sdr},
-        note={\url{https://github.com/mugpahug/pycu-sdr}}
+        url={https://github.com/mugpahug/pycusdr},
+        note={\url{https://github.com/mugpahug/pycusdr}}
     }
 ```
 
@@ -45,7 +45,7 @@ Special thanks to Craig R. Benson for proposing the idea and for the fruitful di
 
 ## Examples and running benchmarks <a name="bench"></a>
 
-To run pyCu-SDR start `start_pycu-sdr.py`
+To run pyCuSDR start `pyCuSDR.py`
 
 ### Example using [GNU radio](https://www.gnuradio.org/) as the [UHD USRP](https://github.com/EttusResearch/uhd) interface
 
@@ -57,8 +57,8 @@ See README in [benchmark](examples/benchmark/README.md) for instructions.
 
 ## More information <a name="more"></a>
 
-To support a different modulation scheme, check the `protocol` files in `pycu-sdr/protocol` and modulators under  `pycu-sdr/modulator/modulators`.
-To support different encoders and decoders, check the `encoders` under `pycu-sdr/modulators/encoders` and `protocol` under `pycu-sdr/protocol`.
+To support a different modulation scheme, check the `protocol` files in `pyCuSDR/protocol` and modulators under  `pyCuSDR/modulator/modulators`.
+To support different encoders and decoders, check the `encoders` under `pyCuSDR/modulators/encoders` and `protocol` under `pyCuSDR/protocol`.
 
 ## License <a name="license"></a>
 This software is licensed under the [BSD license](http://www.opensource.org/licenses/bsd-license.php). See the included [LICENSE](LICENSE) file for more information.

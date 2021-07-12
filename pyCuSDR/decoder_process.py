@@ -360,11 +360,17 @@ class Decoder(Process):
             decodeIn.close()
             ctx = zmq.Context()
             workerRet = ctx.socket(zmq.PUSH)
+            workerRet.setsockopt(zmq.SNDTIMEO,500) # should be more than enough
             workerRet.bind('tcp://*:11001')
 
-            log.info('Preparing data')
+            log.info('Preparing data for stats')
             for w in self.workerData.values():
-                workerRet.send_pyobj(w.getData())
+                try:
+                    workerRet.send_pyobj(w.getData())
+                except zmq.error.Again:
+                    log.error('failed sending stats data. Stats retrieving must be called simultaneously with, or after stop() is issued')
+                    break
+                
             log.info('Finished sending data')
                         
             workerRet.close()

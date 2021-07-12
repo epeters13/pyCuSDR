@@ -136,12 +136,12 @@ class Demodulator_process(Process):
             
 
         ## Variables that can be read and/or set from outside the process for monitoring and online configuration
-        self.__rangeRate = Value('f',1)
+        self.__rangerate = Value('f',1)
         self.__Fc = Value('d',int(self.confRadio['frequency_Hz'] - self.confRadio['frequencyOffset_Hz']))
         if 'Tx' in self.conf['Radios'].keys() and 'frequency_Hz' in self.conf['Radios']['Tx'].keys(): 
             self.TxFc = self.conf['Radios']['Tx']['frequency_Hz'] # used for offset computation. TODO shouldn't be done here
         else:
-            log.warning(f'[{self.radioName}]: TODO: this should not be here --- Tx not found in config file. Setting Tx Fc equal to Rx Fc')
+            # log.warning(f'[{self.radioName}]: TODO: this should not be here --- Tx not found in config file. Setting Tx Fc equal to Rx Fc')
             self.TxFc = self.__Fc.value
             
         self.__Fs = Value('d',int(self.baudRate*self.spSym))
@@ -299,8 +299,8 @@ class Demodulator_process(Process):
                     # log.info('[{}]: demodulate time {} s'.format(self.radioName,time.time()-ts))
 
                     # compute frequency offsets and rangerate
-                    # TxFreqOffset, RxFreqOffset, rangeRate = self.computeTxFreqOffset(dopp,spSymEst)
-                    TxFreqOffset, RxFreqOffset, data['rangeRate'] = self.computeTxFreqOffset(data['doppler'],data['spSymEst'])
+                    # TxFreqOffset, RxFreqOffset, rangerate = self.computeTxFreqOffset(dopp,spSymEst)
+                    TxFreqOffset, RxFreqOffset, data['rangerate'] = self.computeTxFreqOffset(data['doppler'],data['spSymEst'])
                     self.SNRStats(data['SNR'],data['spSymEst'])
 
                     try:
@@ -359,19 +359,19 @@ class Demodulator_process(Process):
             
     def computeTxFreqOffset(self,Doppler_Hz,spSym):
         ## Note: what is called doppler is actually the frequency offset from Fc. It needs to be compensated for the DC IF frequency offset to get the actual doppler
-        Rx_rangeRate = -Doppler_Hz/self.Fc*scipy.constants.speed_of_light
-        dRangeRate = self.TxRangeRate - Rx_rangeRate
+        Rx_rangerate = -Doppler_Hz/self.Fc*scipy.constants.speed_of_light
+        dRangeRate = self.TxRangeRate - Rx_rangerate
         log.debug('TxRangeRate: {} Hz'.format(self.TxRangeRate))
 
         # set values for external access
-        rangeRate = Rx_rangeRate
+        rangerate = Rx_rangerate
         RxIFFreqOffset = dRangeRate*self.Fc/scipy.constants.speed_of_light
         TxFreqOffset = dRangeRate*self.TxFc/scipy.constants.speed_of_light
 
         
-        self.freqOffsetEstStats(TxFreqOffset,RxIFFreqOffset,rangeRate,spSym,Doppler_Hz)
+        self.freqOffsetEstStats(TxFreqOffset,RxIFFreqOffset,rangerate,spSym,Doppler_Hz)
 
-        return TxFreqOffset, RxIFFreqOffset, rangeRate
+        return TxFreqOffset, RxIFFreqOffset, rangerate
     # setters and getters
     @property
     def Fs(self):
@@ -383,16 +383,16 @@ class Demodulator_process(Process):
             self.__Fs.value = Fs
             
     @property
-    def rangeRate(self):
-        with self.__rangeRate.get_lock():
-            val = self.__rangeRate.value
-            self.__rangeRate.value = 0
+    def rangerate(self):
+        with self.__rangerate.get_lock():
+            val = self.__rangerate.value
+            self.__rangerate.value = 0
         return val
 
-    @rangeRate.setter
-    def rangeRate(self,rangeRate):
-        with self.__rangeRate.get_lock():
-            self.__rangeRate.value = np.double(rangeRate)
+    @rangerate.setter
+    def rangerate(self,rangerate):
+        with self.__rangerate.get_lock():
+            self.__rangerate.value = np.double(rangerate)
 
     
     @property
@@ -497,7 +497,7 @@ class Demodulator_process(Process):
             self.__baudRateEst.value = val
 
         
-    def freqOffsetEstStats(self,txIFOffset,rxIFOffset,rangeRate,spSym,doppler_Hz):
+    def freqOffsetEstStats(self,txIFOffset,rxIFOffset,rangerate,spSym,doppler_Hz):
         """
         This method is called in the process to update the frequency offsets (TxFreqOffset and RxFreqOffset)
         If a transmission is present, the frequency offsets will only be based upon measurements from data
@@ -511,7 +511,7 @@ class Demodulator_process(Process):
                 pass    
             self.__TxIFFreqOffsetArray = [txIFOffset]
             self.__RxIFFreqOffsetArray = [rxIFOffset]
-            self.__rangeRateArray = [rangeRate]
+            self.__rangerateArray = [rangerate]
             self.__TxIFFreqOffsetLastSpSym = spSym
             self.__RxFreqOffsetArray = [doppler_Hz]
             self.__baudRateEstArray = [baudRateEst]
@@ -519,20 +519,20 @@ class Demodulator_process(Process):
             if np.abs(self.__TxIFFreqOffsetLastSpSym - self.spSym) > TOLVAL and len(self.__TxIFFreqOffsetArray) == 1:
                 self.__TxIFFreqOffsetArray[0] = txIFOffset
                 self.__RxIFFreqOffsetArray[0] = rxIFOffset
-                self.__rangeRateArray[0] = rangeRate
+                self.__rangerateArray[0] = rangerate
                 self.__TxIFFreqOffsetLastSpSym = spSym
                 self.__RxFreqOffsetArray[0] = doppler_Hz
                 self.__baudRateEstArray[0] = baudRateEst
             else:
                 self.__TxIFFreqOffsetArray.append(txIFOffset)
                 self.__RxIFFreqOffsetArray.append(rxIFOffset)
-                self.__rangeRateArray.append(rangeRate)
+                self.__rangerateArray.append(rangerate)
                 self.__RxFreqOffsetArray.append(doppler_Hz)
                 self.__baudRateEstArray.append(baudRateEst)
                 
         self.TxIFFOffset = sum(self.__TxIFFreqOffsetArray)/len(self.__TxIFFreqOffsetArray)
         self.RxIFFreqOffset = sum(self.__RxIFFreqOffsetArray)/len(self.__RxIFFreqOffsetArray)
-        self.rangeRate = sum(self.__rangeRateArray)/len(self.__rangeRateArray)
+        self.rangerate = sum(self.__rangerateArray)/len(self.__rangerateArray)
         self.RxFreqOffset = sum(self.__RxFreqOffsetArray)/len(self.__RxFreqOffsetArray) + self.baudRate*self.spSym/4
         self.baudRateEst = sum(self.__baudRateEstArray)/len(self.__baudRateEstArray)
 

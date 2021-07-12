@@ -10,7 +10,7 @@ import socket
 
 def loggerSetup(logName,logLevel,logFileName,logFolder,logFmt,config = None, logLevelConsole = None):
     """
-    Configure the logger for adfags modem
+    Configure the logger for pyCuSDR
     All provided arguments override the config setting when specified
 
     set logLevel to None if the level has to be read from config

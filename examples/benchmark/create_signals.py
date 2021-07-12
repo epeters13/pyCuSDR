@@ -3,7 +3,7 @@
 import numpy as np
 
 import sys
-sys.path.append('../../py-cuda-sdr')
+sys.path.append('../../pyCuSDR')
 from lib import *
 
 

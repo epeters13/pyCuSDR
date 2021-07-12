@@ -1,6 +1,6 @@
-# Bit error rate benchmarks through py-CUDA-SDR
+# Bit error rate benchmarks through pyCuSDR
 
-These modules are made to directly benchmark the bit error rate (BER) performance of py-CUDA-SDR for a few select modulation schemes. The benchmark scripts applies noise to the data and injects it straight into the py-CUDA-SDR demodulator. The BER performance of the received data is reported.
+These modules are made to directly benchmark the bit error rate (BER) performance of pyCuSDR for a few select modulation schemes. The benchmark scripts applies noise to the data and injects it straight into the pyCuSDR demodulator. The BER performance of the received data is reported.
 
 ## Getting more help
 
@@ -10,8 +10,8 @@ Run `python bench_sdr.py` to print the instructions
 
 Start terminal #1
 ```
-cd src
-python start_py_cuda_sdr.py -c ../config/benchmark/bench_XXXX.json -v
+cd pyCuSDR
+python pyCuSDR.py -c ../config/benchmark/bench_XXXX.json -v
 ```
 where XXXX is the modulation scheme that is desired
 
