@@ -128,40 +128,47 @@ class Rig_server(threading.Thread):
 
 
     def check_for_commands(self):
-        
-        if b'\n' in self.rx_buf: # commands are terminated with '\n'
-            # print(f'\n\nrx_buf {self.rx_buf}')
-            cmd_full, self.rx_buf = self.rx_buf.split(b'\n',1)
-            # print(f'cmd_full {cmd_full}')
-            if cmd_full.startswith(b'\\'): # special commands, these are treated separately
-                if b'\\chk_vfo' in cmd_full:
-                    self.send_response('CHKVFO 0')
-                elif b'\\dump' in cmd_full:
-                    self.send_response(dump)
-                else:
-                    self.send_response(Response_codes.UNIMLEMENTED)
-            elif cmd_full.startswith(b'\g') or cmd_full.startswith(b'\s'): # long commands
-                cmd,data = cmd_full.split(b' ',1)
+        try:
+            if b'\n' in self.rx_buf: # commands are terminated with '\n'
+                # print(f'\n\nrx_buf {self.rx_buf}')
+                cmd_full, self.rx_buf = self.rx_buf.split(b'\n',1)
+                #print(f'cmd_full {cmd_full}')
+                if cmd_full.startswith(b'\\'): # special commands, these are treated separately
+                    if b'\\chk_vfo' in cmd_full:
+                        self.send_response('CHKVFO 0')
+                    elif b'\\dump' in cmd_full:
+                        self.send_response(dump)
+                    else:
+                        self.send_response(Response_codes.UNIMLEMENTED)
+                elif cmd_full.startswith(b'\g') or cmd_full.startswith(b'\s'): # long commands
+                    cmd,data = cmd_full.split(b' ',1)
 
 
-                if cmd == b'':
-                    self.send_response(Response_codes.UNIMLEMENTED)
-                else:
-                    self.parse_commands(cmd,val)
+                    if cmd == b'':
+                        self.send_response(Response_codes.UNIMLEMENTED)
+                    else:
+                        self.parse_commands(cmd,val)
 
-            else:
-                if len(cmd_full) > 1:
-                    cmd,val = cmd_full.split(b' ',1)
                 else:
-                    cmd = cmd_full
-                    val = b'0'
-                if cmd == b'':
-                    self.send_response(Response_codes.UNIMLEMENTED)
-                else:
-                    cmd = SHORT_TO_LONG_CMD.get(cmd,b'')
-                    # print(f'cmd {cmd}')
-                    self.parse_commands(cmd,val)
-                
+                    if len(cmd_full) > 1:
+                        cmd,val = cmd_full.split(b' ',1)
+                    else:
+                        cmd = cmd_full
+                        val = b'0'
+                    if cmd == b'':
+                        self.send_response(Response_codes.UNIMLEMENTED)
+                    else:
+                        cmd = SHORT_TO_LONG_CMD.get(cmd,b'')
+                        # print(f'cmd {cmd}')
+                        self.parse_commands(cmd,val)
+
+        except Exception as e:
+            try:
+                print(f"error raised while parsing command: {cmd_full}")
+            except:
+                print(f"error raised while parsing command: {cmd_full}")
+
+            print(e)
                 
 
     def run(self):

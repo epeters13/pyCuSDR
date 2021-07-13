@@ -3,8 +3,8 @@
     "CC11xx" : {
 	"addr" : "localhost",
 	"port" : 4532,
-	// "config" : "../config/CC11xx.json"
-	"config" : "../config/benchmark/bench_FSK.json"
+	"config" : "../config/CC11xx.json"
+	//"config" : "../config/benchmark/bench_FSK.json"
     },
     "test_radio1" : {
 	"addr" : "localhost",

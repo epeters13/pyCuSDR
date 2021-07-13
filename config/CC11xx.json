@@ -65,7 +65,7 @@
 		"baud": 7416,
 		"samplesPerSym": 128,
 		"frequency_Hz": 402.538e6, // actual carrier center frequency
-		"frequency_hamlib_Hz": 400e6, // This is the carrier that gpredict uses. We need to subtract this to recover the Doppler component of the frequency provided by gpredict
+		"frequency_hamlib_Hz": 145.89e6, // This is the carrier that gpredict uses. We need to subtract this to recover the Doppler component of the frequency provided by gpredict
 		"frequencyOffset_Hz": 148320, // to offtune the DAC
 		// "noFlags": 30, // number of sync flags to apply
 		"Protocol": "UHF",
